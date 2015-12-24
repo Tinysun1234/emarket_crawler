@@ -45,7 +45,7 @@ class IcbcSpider(MySpiderBase):
             if  this_type_name.encode('utf8') in type_names:
                 type_sel_list += type_sel.xpath('.//a')
         
-        logging.info('%d types in page!' % len(type_sel_list))
+#         logging.info('%d types in page!' % len(type_sel_list))
         type_title_list = [type_sel.xpath('./text()').extract()[0].encode('utf8') for type_sel in type_sel_list]
         type_url_list = [self.list_url_prefix + type_sel.xpath('./@href').extract()[0].encode('utf8') for type_sel in type_sel_list]
         type_tuple = zip(type_title_list, type_url_list)
@@ -70,7 +70,7 @@ class IcbcSpider(MySpiderBase):
         name_list = glist.xpath('.//div[@class="p-name"]/a/@title').extract()
         id_list = glist.xpath('./input[@id="prod_id"]/@value').extract()
         price_list = glist.xpath('./div[@class="p-price"]/text()').extract()
-        commentcount_list = glist.xpath('./div[@class="extra"]/span[@id="eAmt"]/text()').extract()
+#         commentcount_list = glist.xpath('./div[@class="extra"]/span[@id="eAmt"]/text()').extract()
         picurl_list = glist.xpath('.//img/@src').extract()
         
         # 当前页面无商品
@@ -80,7 +80,7 @@ class IcbcSpider(MySpiderBase):
         
         te = response.xpath('//span[@class="search_page fr"]/text()').extract()[0] 
         total_page = int(re.search(r'/(\d+)', te).group(1))
-        logging.info('%d goods in page %d/%d for %s' % (len(name_list), cur_page, total_page , category))
+        logging.info('Now at page %d/%d for %s' % (cur_page, total_page , category))
         # item_list = []     
         for index in range(len(name_list)):
             item = JdItem()

@@ -83,14 +83,13 @@ class JdSpider(MySpiderBase):
         except Exception as e:
             logging.debug(e)
             return
-        logging.info('%d goods in page %d/%d for %s' % (len(detail_urls), cur_page, total_page , category))
+        logging.info('Now at page %d/%d for %s' % (cur_page, total_page , category))
        
         for detail_url in detail_urls:
             yield scrapy.Request(detail_url,
                                  callback=self.parse_detail_page)           
 
         # 生成下一页的request
-
         if cur_page < total_page:
             nextpage_url = page_url_prefix + '&page=' + str(cur_page + 1)
             yield scrapy.Request(nextpage_url,
@@ -119,15 +118,15 @@ class JdSpider(MySpiderBase):
         item['url'] = self.goods_meta['url']
         item['idInMarket'] = self.get_id()
         item['name'] = self.get_name(goods_info_sel)
-        item['price'] = self.get_price()
-        item['discount'] = self.get_promotion()
-        item['comment'] = self.get_comment()
+        item['price'] = JDTools.get_price(self.goods_meta)
+        item['discount'] = JDTools.get_promotion(self.goods_meta)
+        item['comment'] = JDTools.get_comment(self.goods_meta)
         item['market'] = self.goods_meta['market']
-        item['updateTime'] = self.get_time()
-        item['commonComment'] = self.get_tags()
-        item['stock'] = self.get_stock()
-        item['pics'] = self.get_pics(goods_info_sel)
-        item['priceChangeHistory'] = self.get_history()
+        item['updateTime'] = JDTools.get_timestamp()
+        item['commonComment'] = JDTools.get_tags(self.goods_meta)
+        item['stock'] = JDTools.get_stock(self.goods_meta)
+        item['pics'] = JDTools.get_pics(goods_info_sel)
+        item['priceChangeHistory'] = JDTools.get_history_price(self.goods_meta)
 
 #            inspect_response(response, self)
 #         logging.info(item)
@@ -146,46 +145,5 @@ class JdSpider(MySpiderBase):
         return re.search(r'(\d+)\.htm', self.goods_meta['url']).group(1)
         
     def get_name(self, goods_info_sel):
-        the_name = JDTools.convert_to_utf8(goods_info_sel.xpath('//div[@id="name"]/h1/text()')[0].extract())
-        
-        if not the_name:
-            raise Exception('No Name value')
-        return the_name
-    
-    def get_price(self):
-        '''
-        JD的价格通过ajax请求得到
-        '''
-        price = JDTools.get_price(self.goods_meta)
-        if not price:
-            raise Exception('No Price value')
-        return price
-    
-    def get_promotion(self):
-        '''
-        促销信息
-        '''
-        return JDTools.get_promotion(self.goods_meta)
-        
-    def get_comment(self):
-        comment = JDTools.get_comment(self.goods_meta)
-        if not comment:
-            raise Exception('No Comment value')
-        return comment
-    
-    def get_time(self):
-        return JDTools.get_timestamp()
-    
-    def get_tags(self):
-        return JDTools.get_tags(self.goods_meta)
-    
-    def get_stock(self):
-        return JDTools.get_stock(self.goods_meta)
-    
-    def get_pics(self, goods_info_sel):
-        return JDTools.get_pics(goods_info_sel)
-    
-    def get_history(self):
-        return JDTools.get_history_price(self.goods_meta)
-        
+        return JDTools.convert_to_utf8(goods_info_sel.xpath('//div[@id="name"]/h1/text()')[0].extract())     
         

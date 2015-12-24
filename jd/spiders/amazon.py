@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
+'''
+Created on Dec 24, 2015
+
+@author: tisun
+'''
 import scrapy
 import jd.settings
 import logging
 from myspiderbase import MySpiderBase
 from tools.amazontools import AmazonTools
 from jd.items import JdItem
+from scrapy.shell import inspect_response
 
 class AmazonSpider(MySpiderBase):
     name = "amazon"
@@ -50,7 +56,10 @@ class AmazonSpider(MySpiderBase):
         cur_page = response.meta['cur_page']
         cat = response.meta['cat']
         pages_sel = response.xpath('.//div[@id="pagn"]/span')
-        total_page = int(pages_sel.xpath('./text()').extract()[-2])
+        try:
+            total_page = int(pages_sel.xpath('./text()').extract()[-2])
+        except Exception:
+            inspect_response(response, self)
         logging.info('Now at %d/%d for %s' % (cur_page, total_page, cat))
 
         goods_sel = response.xpath('//li[@class="s-result-item  celwidget "]')

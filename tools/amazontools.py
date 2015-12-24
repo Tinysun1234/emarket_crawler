@@ -68,14 +68,17 @@ class AmazonTools(ToolsBase):
         comments = []
         for goods_id in ids:
             comment_url = cls.comment_url_template % goods_id
-            comment_page = opener.open(comment_url).read()
-            matches = re.findall(r'>(\d+)<', comment_page)
-            if len(matches) is 5:
-                comment_raw = [int(m) for m in matches]
-                one_comment = {'goodComment':comment_raw[0],
-                          'fairComment':comment_raw[1] + comment_raw[2],
-                          'badComment':comment_raw[3] + comment_raw[4]}
-                comments.append(one_comment)
+            try:
+                comment_page = opener.open(comment_url).read()
+                matches = re.findall(r'>(\d+)<', comment_page)
+                if len(matches) is 5:
+                    comment_raw = [int(m) for m in matches]
+                    one_comment = {'goodComment':comment_raw[0],
+                              'fairComment':comment_raw[1] + comment_raw[2],
+                              'badComment':comment_raw[3] + comment_raw[4]}
+                    comments.append(one_comment)
+            except Exception:
+                comments.append(dict())
         return comments
             
             
@@ -83,7 +86,7 @@ class AmazonTools(ToolsBase):
     @RanUAProxy
     def get_histories_stock(cls, ids, opener=None):
         '''
-        从盒子网获取历史数据
+        从盒子网获取历史数据和库存信息
         '''
         history_price_list = []
         stock_list = []

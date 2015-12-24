@@ -11,7 +11,7 @@ import re
 import time
 import urllib2
 import jd.settings
-import random
+# import random
 
 from toolsbase import ToolsBase, RanUAProxy
 
@@ -41,6 +41,7 @@ class JDTools(ToolsBase):
         '''
         Constructor
         '''
+        pass
     @classmethod   
     def detect_charset(cls, response):
         the_charset = re.search(r'charset=([-a-zA-Z]+)', response.body, re.I)
@@ -50,6 +51,7 @@ class JDTools(ToolsBase):
     @classmethod
     def price_url(cls, goods_meta):
         return cls.price_url_template % goods_meta['skuId']
+    
     @classmethod
     def price_parser(cls, raw):
         price_str = cls.convert_to_utf8(raw)
@@ -109,7 +111,7 @@ class JDTools(ToolsBase):
             return cls.promotion_parser(raw)
         except Exception as e:
             logging.warn('Failed to get promotions due to ' + str(e) + ' at ' + promotion_url)
-            return None
+            return []
         
     @classmethod
     def comment_url(cls, goods_meta):
@@ -139,7 +141,7 @@ class JDTools(ToolsBase):
             return cls.comment_parser(raw)
         except Exception as e:
             logging.warn('Failed to get comments due to ' + str(e) + ' at ' + comment_url)
-            return None
+            return dict()
     
     @classmethod
     def tags_url(cls, goods_meta):
@@ -195,7 +197,7 @@ class JDTools(ToolsBase):
             return stock
         except Exception as e:
             logging.warn('Failed to get stock due to ' + str(e) + ' at ' + stock_url)
-            return None
+            return dict()
     
     @classmethod
     def get_pics(cls, goods_info_sel):
@@ -207,12 +209,7 @@ class JDTools(ToolsBase):
             return ['http:' + re.sub(r'/n5/', r'/n1/', picurl) for picurl in pics_tmp]
         except Exception as e :
             logging.warn('Failed to get pics due to ' + str(e))
-            return None
-            
-    @classmethod
-    def random_proxy(cls):
-        proxy = random.choice(jd.settings.PROXIES)
-        return "http://%s" % proxy['ip_port']        
+            return []     
 
     @classmethod
     @RanUAProxy
@@ -235,7 +232,7 @@ class JDTools(ToolsBase):
                 price = float(price_raw['y'])
                 history_price_dict[time_plot] = price
             return history_price_dict
-        except Exception as e:
+        except Exception:
 #             logging.warn('Failed to get history price due to ' + str(e))
             return dict()
             
