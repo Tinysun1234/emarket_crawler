@@ -108,6 +108,8 @@ class IcbcSpider(MySpiderBase):
             yield scrapy.FormRequest(response.url, callback=self.parse_goods_list_page, \
                                  formdata={'currentPage':str(cur_page + 1)}, \
                                  meta={'cur_page':(cur_page + 1), 'category':category}) 
+        else:
+            logging.info('Complete crawling %s' % category)    
 
 
 

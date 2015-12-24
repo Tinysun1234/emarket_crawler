@@ -4,7 +4,7 @@ from jd.items import JdItem
 import logging
 import jd.settings
 import re
-from scrapy.shell import inspect_response
+# from scrapy.shell import inspect_response
 from tools.jdtools import JDTools
 from myspiderbase import MySpiderBase
 
@@ -45,7 +45,8 @@ class JdSpider(MySpiderBase):
             type_tuple = zip(type_title_list, type_url_list)
             logging.info('%d types in page!' % len(type_sel_list))
         except Exception:
-            inspect_response(response, self)
+            logging.warn('Goods list page not struct properly!')
+#             inspect_response(response, self)
             return
         
         for type_item in type_tuple:
@@ -73,9 +74,7 @@ class JdSpider(MySpiderBase):
         # 当前页面无商品
         if not detail_urls:
             logging.info('No goods for %s at page %d/%d!' % (category, cur_page, total_page))
-            if cur_page < total_page:
-                inspect_response(response, self)
-            return
+            return 
         
         try:
             total_page = int(response.xpath('//span[@class="fp-text"]/i/text()').extract()[0])
@@ -96,6 +95,8 @@ class JdSpider(MySpiderBase):
                                  meta={'category':category,
                                        'cur_page':(cur_page + 1),
                                        'page_url_prefix':page_url_prefix})  
+        else:
+            logging.info('Complete crawling %s' % category)
 
     def parse_detail_page(self, response):
         '''
@@ -109,7 +110,7 @@ class JdSpider(MySpiderBase):
         logging.debug(self.goods_meta)
         
         if not (category_info_sel and goods_info_sel and comm_comment_info_sel and comment_count_info_sel):
-            inspect_response(response, self)
+            logging.warn('Detail page struct not properly!')
             return
 
         item = JdItem()

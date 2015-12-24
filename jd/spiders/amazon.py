@@ -10,7 +10,7 @@ import logging
 from myspiderbase import MySpiderBase
 from tools.amazontools import AmazonTools
 from jd.items import JdItem
-from scrapy.shell import inspect_response
+# from scrapy.shell import inspect_response
 
 class AmazonSpider(MySpiderBase):
     name = "amazon"
@@ -59,7 +59,9 @@ class AmazonSpider(MySpiderBase):
         try:
             total_page = int(pages_sel.xpath('./text()').extract()[-2])
         except Exception:
-            inspect_response(response, self)
+            logging.warn('Banned by Amazon at page %d for %c!', cur_page, cat)
+            return 
+        
         logging.info('Now at %d/%d for %s' % (cur_page, total_page, cat))
 
         goods_sel = response.xpath('//li[@class="s-result-item  celwidget "]')
@@ -96,6 +98,8 @@ class AmazonSpider(MySpiderBase):
                                  callback=self.parse_goods_list_page,
                                  meta={'cur_page':cur_page + 1,
                                        'cat':cat})
+        else:
+            logging.info('Complete crawling %s' % cat)
             
     
         
