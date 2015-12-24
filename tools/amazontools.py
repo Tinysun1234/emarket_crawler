@@ -9,7 +9,7 @@ import urllib2
 from toolsbase import ToolsBase, RanUAProxy
 import time
 import jd.settings
-import logging
+# import logging
 
 class AmazonTools(ToolsBase):
     '''

@@ -6,7 +6,6 @@ import jd.settings
 import re
 from scrapy.shell import inspect_response
 from tools.jdtools import JDTools
-import sys
 from myspiderbase import MySpiderBase
 
 class JdSpider(MySpiderBase):
