@@ -13,6 +13,7 @@ from jd.items import JdItem
 # from scrapy.shell import inspect_response
 
 class AmazonSpider(MySpiderBase):
+    download_delay = 2
     name = "amazon"
     allowed_domains = ["amazon.cn"]
     start_urls = (
@@ -59,7 +60,7 @@ class AmazonSpider(MySpiderBase):
         try:
             total_page = int(pages_sel.xpath('./text()').extract()[-2])
         except Exception:
-            logging.warn('Banned by Amazon at page %d for %c!', cur_page, cat)
+            logging.warn('Banned by Amazon at page %d for %s!', cur_page, cat)
             return 
         
         logging.info('Now at %d/%d for %s' % (cur_page, total_page, cat))
@@ -88,8 +89,8 @@ class AmazonSpider(MySpiderBase):
             item['updateTime'] = AmazonTools.get_timestamp()
             item['priceChangeHistory'] = histories[i]
             item['stock'] = stocks[i]
-            logging.info(item)
-#             yield item
+#             logging.info(item)
+            yield item
         
         # 翻页
         if cur_page < total_page:

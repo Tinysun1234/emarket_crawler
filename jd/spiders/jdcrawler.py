@@ -102,14 +102,12 @@ class JdSpider(MySpiderBase):
         '''
         解析商品详情页
         '''
-        category_info_sel = response.xpath('//div[@class="breadcrumb"]')
-        goods_info_sel = response.xpath('//div[@id="p-box"]')
-        comm_comment_info_sel = response.xpath('//div[@id="comment"]')
-        comment_count_info_sel = response.xpath('//div[@id="comments-list"]')
-        self.get_goodsmeta(response)
-        logging.debug(self.goods_meta)
+        try:
+            goods_info_sel = response.xpath('//div[@id="p-box"]')
+            self.get_goodsmeta(response)
+            logging.debug(self.goods_meta)
         
-        if not (category_info_sel and goods_info_sel and comm_comment_info_sel and comment_count_info_sel):
+        except Exception:
             logging.warn('Detail page struct not properly!')
             return
 

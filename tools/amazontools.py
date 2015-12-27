@@ -70,13 +70,17 @@ class AmazonTools(ToolsBase):
             comment_url = cls.comment_url_template % goods_id
             try:
                 comment_page = opener.open(comment_url).read()
-                matches = re.findall(r'>(\d+)<', comment_page)
+                matches = re.findall(r'>([.,0-9]+)<', comment_page)
                 if len(matches) is 5:
-                    comment_raw = [int(m) for m in matches]
+                    comment_raw = [int(m.remove(',')) for m in matches]
                     one_comment = {'goodComment':comment_raw[0],
                               'fairComment':comment_raw[1] + comment_raw[2],
                               'badComment':comment_raw[3] + comment_raw[4]}
                     comments.append(one_comment)
+                else:
+                    print 'warn : comment struct wrong:' + comment_url
+                    print matches
+                    comments.append(dict())
             except Exception:
                 comments.append(dict())
         return comments
