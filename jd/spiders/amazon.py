@@ -90,7 +90,7 @@ class AmazonSpider(MySpiderBase):
             item['priceChangeHistory'] = histories[i]
             item['stock'] = stocks[i]
 #             logging.info(item)
-            yield item
+#             yield item
         
         # 翻页
         if cur_page < total_page:

@@ -9,7 +9,8 @@ import urllib2
 from toolsbase import ToolsBase, RanUAProxy
 import time
 import jd.settings
-# import logging
+from lxml.html import soupparser
+import logging
 
 class AmazonTools(ToolsBase):
     '''
@@ -70,18 +71,32 @@ class AmazonTools(ToolsBase):
             comment_url = cls.comment_url_template % goods_id
             try:
                 comment_page = opener.open(comment_url).read()
-                matches = re.findall(r'>([.,0-9]+)<', comment_page)
-                if len(matches) is 5:
-                    comment_raw = [int(m.remove(',')) for m in matches]
-                    one_comment = {'goodComment':comment_raw[0],
-                              'fairComment':comment_raw[1] + comment_raw[2],
-                              'badComment':comment_raw[3] + comment_raw[4]}
-                    comments.append(one_comment)
-                else:
-                    print 'warn : comment struct wrong:' + comment_url
-                    print matches
-                    comments.append(dict())
-            except Exception:
+                print comment_url
+#                 matches = re.findall(r'>([.,0-9]+)<', comment_page)
+#                 if len(matches) is 5:
+#                     comment_raw = [int(m.remove(',')) for m in matches]
+#                     one_comment = {'goodComment':comment_raw[0],
+#                               'fairComment':comment_raw[1] + comment_raw[2],
+#                               'badComment':comment_raw[3] + comment_raw[4]}
+#                     comments.append(one_comment)
+#                 else:
+#                     print 'warn : comment struct wrong:' + comment_url
+#                     print matches
+#                     comments.append(dict())
+                doc = soupparser.fromstring(comment_page)
+                comment_sels = doc.xpath('//tr')
+                comment_raw = []
+                for one_comm in comment_sels:
+                    comm_str = str(one_comm.xpath('./td')[-1].xpath('./span')[-1].xpath('./text()')[0])
+                    comment_raw.append(int(comm_str.replace(',', '')))
+                        
+                one_comment = {'goodComment':comment_raw[0],
+                            'fairComment':comment_raw[1] + comment_raw[2],
+                            'badComment':comment_raw[3] + comment_raw[4]}
+                comments.append(one_comment)
+                logging.info(comments)
+            except Exception as e:
+                logging.warn(e)
                 comments.append(dict())
         return comments
             
