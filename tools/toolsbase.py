@@ -21,9 +21,6 @@ def RanUAProxy(func):
         return func(*args, **kwargs)
     return _RanUAProxy
 
-def random_proxy():
-    proxy = random.choice(jd.settings.PROXIES)
-    return "http://%s" % proxy['ip_port']
    
 class ToolsBase(object):
     '''

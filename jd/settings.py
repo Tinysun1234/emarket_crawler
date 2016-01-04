@@ -39,11 +39,12 @@ USER_AGENTS = [
 ]
 
 AJAX_TIMEOUT = 5
-
-PROXIES = [
-  {'ip_port': '123.129.49.154:9000', 'user_pass': ''},
+# 
+# PROXIES = [
+#   {'ip_port': '123.129.49.154:9000', 'user_pass': ''},
 #   {'ip_port':'210.22.150.122:8123', 'user_pass':''},
-]
+# ]
+PROXY_FILE = r'/home/tisun/proxy.pkl'
 
 # user defined param
 ITEMS_PER_REQUEST = 30
@@ -87,7 +88,8 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
 #    'cnblogs.middlewares.MyCustomDownloaderMiddleware': 543,
-    'jd.middlewares.RandomUserAgent': 1,  # 随机user agent
+    'jd.middlewares.RandomUserAgent': 100,  # 随机user agent
+#     'jd.middlewares.RandomProxyMiddleware': 200  # 随机代理
     # 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110, #此API已经弃用
     # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110, #代理需要用到
 #     'jd.middlewares.ProxyMiddleware': 100,  # 代理需要用到
@@ -104,8 +106,8 @@ DOWNLOADER_MIDDLEWARES = {
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
 #     'scrapy.contrib.pipeline.images.ImagesPipeline': 100,
-    'jd.pipelines.CloudPipeline':200,
-#     'jd.pipelines.JdPipeline': 300,
+#     'jd.pipelines.CloudPipeline':200,
+    'jd.pipelines.JdPipeline': 300,
 }
 TOP_PATH = '/home/tisun/storage/'
 

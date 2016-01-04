@@ -71,18 +71,6 @@ class AmazonTools(ToolsBase):
             comment_url = cls.comment_url_template % goods_id
             try:
                 comment_page = opener.open(comment_url).read()
-                print comment_url
-#                 matches = re.findall(r'>([.,0-9]+)<', comment_page)
-#                 if len(matches) is 5:
-#                     comment_raw = [int(m.remove(',')) for m in matches]
-#                     one_comment = {'goodComment':comment_raw[0],
-#                               'fairComment':comment_raw[1] + comment_raw[2],
-#                               'badComment':comment_raw[3] + comment_raw[4]}
-#                     comments.append(one_comment)
-#                 else:
-#                     print 'warn : comment struct wrong:' + comment_url
-#                     print matches
-#                     comments.append(dict())
                 doc = soupparser.fromstring(comment_page)
                 comment_sels = doc.xpath('//tr')
                 comment_raw = []
@@ -95,8 +83,7 @@ class AmazonTools(ToolsBase):
                             'badComment':comment_raw[3] + comment_raw[4]}
                 comments.append(one_comment)
                 logging.info(comments)
-            except Exception as e:
-                logging.warn(e)
+            except Exception:
                 comments.append(dict())
         return comments
             

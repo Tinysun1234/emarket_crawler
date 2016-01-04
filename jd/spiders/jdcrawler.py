@@ -70,6 +70,8 @@ class JdSpider(MySpiderBase):
         # 获取当前页面所有商品链接并生成request_list
         glist = response.xpath('//div[@id="plist"]/ul/li')        
         detail_urls = [ raw_link for raw_link in glist.xpath('.//div[@class="p-name"]/a/@href').extract()]
+#         shops = [ JDTools.convert_to_utf8(vendor) \
+#                  for vendor in response.xpath('//div[@class="p-shop"]/@data-shop_name').extract()]
 #         id_list = glist.xpath('.//div[@data-sku]/@data-sku').extract()
         # 当前页面无商品
         if not detail_urls:
@@ -83,9 +85,13 @@ class JdSpider(MySpiderBase):
             return
         logging.info('Now at page %d/%d for %s' % (cur_page, total_page , category))
        
-        for detail_url in detail_urls:
+        for i, detail_url in enumerate(detail_urls):
+            item = JdItem()
+            item['category'] = category
+#             item['shop'] = shops[i]
             yield scrapy.Request(detail_url,
-                                 callback=self.parse_detail_page)           
+                                 callback=self.parse_detail_page,
+                                 meta={'item':item})           
 
         # 生成下一页的request
         if cur_page < total_page:
@@ -111,7 +117,7 @@ class JdSpider(MySpiderBase):
             logging.warn('Detail page struct not properly!')
             return
 
-        item = JdItem()
+        item = response.meta['item']
 
         item['url'] = self.goods_meta['url']
         item['idInMarket'] = self.get_id()
@@ -125,10 +131,12 @@ class JdSpider(MySpiderBase):
         item['stock'] = JDTools.get_stock(self.goods_meta)
         item['pics'] = JDTools.get_pics(goods_info_sel)
         item['priceChangeHistory'] = JDTools.get_history_price(self.goods_meta)
+        item['shop'] = JDTools.get_shop(response)
 
 #            inspect_response(response, self)
-#         logging.info(item)
         return item
+#         if JDTools.convert_to_utf8(item['shop']) != JDTools.convert_to_utf8('京东自营'):
+#             print item['shop']
 
     
     def get_goodsmeta(self, response):

@@ -236,10 +236,21 @@ class JDTools(ToolsBase):
 #             logging.warn('Failed to get history price due to ' + str(e))
             return dict()
             
-            
+    @classmethod
+    def get_shop(cls, response):
+        shop_sel = response.xpath('//ul[@id="parameter2"]/li')[2]
+        try:
+            if '店铺'.decode('utf8') in \
+                shop_sel.xpath('./text()').extract()[0]:
+                return cls.convert_to_utf8(shop_sel.xpath('./@title').extract()[0])
+            else:
+                return cls.convert_to_utf8('京东自营')
+        except Exception:
+            return cls.convert_to_utf8('京东自营') 
+        
         
             
                 
         
-        
+    
         

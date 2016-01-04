@@ -27,4 +27,6 @@ class JdItem(scrapy.Item):
     updateTime = scrapy.Field()  # 更新时间
     pics = scrapy.Field()  # 标题图片url
     priceChangeHistory = scrapy.Field()  # 历史价格
+    vendor = scrapy.Field()  # 厂家
+    shop = scrapy.Field()  # 店铺名
     pass
