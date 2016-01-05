@@ -14,7 +14,7 @@ BOT_NAME = 'jd'
 
 SPIDER_MODULES = ['jd.spiders']
 NEWSPIDER_MODULE = 'jd.spiders'
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = r"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"
@@ -51,7 +51,8 @@ ITEMS_PER_REQUEST = 30
 
 GOODS_TYPE_NAMES = {'jd':['手机', '数码', '电脑办公'],
                     'icbc':['手机', '数码', '电脑'],
-                    'amazon':['手机摄影数码', '电脑办公']
+                    'amazon':['手机摄影数码', '电脑办公'],
+                    'tmall3c':['手机', '笔记本', '摄影摄像']
                     }
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -88,7 +89,7 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
 #    'cnblogs.middlewares.MyCustomDownloaderMiddleware': 543,
-    'jd.middlewares.RandomUserAgent': 100,  # 随机user agent
+#     'jd.middlewares.RandomUserAgent': 100,  # 随机user agent
 #     'jd.middlewares.RandomProxyMiddleware': 200  # 随机代理
     # 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110, #此API已经弃用
     # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110, #代理需要用到
