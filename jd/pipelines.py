@@ -47,6 +47,7 @@ class CloudPipeline(object):
                 raise DropItem("Missing %s" % data)
         if valid:
             # self.collection.insert(dict(item))
-            self.conn[settings.MONGODB_DB_CLOUD]['goodInfo'].insert(dict(item))
+#             self.conn[settings.MONGODB_DB_CLOUD]['goodInfo'].insert(dict(item))
+            self.conn[settings.MONGODB_DB_CLOUD]['goodInfo_1'].insert(dict(item))
             logging.debug("Item from " + item['market'] + 'inserted!')
         return item

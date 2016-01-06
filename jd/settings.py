@@ -14,7 +14,7 @@ BOT_NAME = 'jd'
 
 SPIDER_MODULES = ['jd.spiders']
 NEWSPIDER_MODULE = 'jd.spiders'
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = r"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"
@@ -53,7 +53,12 @@ GOODS_TYPE_NAMES = {'jd':['手机', '数码', '电脑办公'],
                     'icbc':['手机', '数码', '电脑'],
                     'amazon':['手机摄影数码', '电脑办公'],
                     'tmall3c':['手机', '笔记本', '摄影摄像']
+#                     'tmall3c':['手机']
                     }
+
+# 调试天猫商城使用
+# DUPEFILTER_DEBUG = True
+
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS=32
@@ -107,8 +112,8 @@ DOWNLOADER_MIDDLEWARES = {
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
 #     'scrapy.contrib.pipeline.images.ImagesPipeline': 100,
-#     'jd.pipelines.CloudPipeline':200,
-    'jd.pipelines.JdPipeline': 300,
+    'jd.pipelines.CloudPipeline':200,
+#     'jd.pipelines.JdPipeline': 300,
 }
 TOP_PATH = '/home/tisun/storage/'
 

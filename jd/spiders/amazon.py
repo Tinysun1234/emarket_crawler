@@ -78,6 +78,7 @@ class AmazonSpider(MySpiderBase):
         
         for i in xrange(len(ids)):
             item = JdItem()
+            item['category'] = cat
             item['idInMarket'] = ids[i]
             item['name'] = names[i]
             item['url'] = urls[i]
@@ -90,7 +91,7 @@ class AmazonSpider(MySpiderBase):
             item['priceChangeHistory'] = histories[i]
             item['stock'] = stocks[i]
 #             logging.info(item)
-#             yield item
+            yield item
         
         # 翻页
         if cur_page < total_page:

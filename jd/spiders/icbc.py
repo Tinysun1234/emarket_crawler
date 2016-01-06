@@ -72,6 +72,7 @@ class IcbcSpider(MySpiderBase):
         price_list = glist.xpath('./div[@class="p-price"]/text()').extract()
 #         commentcount_list = glist.xpath('./div[@class="extra"]/span[@id="eAmt"]/text()').extract()
         picurl_list = glist.xpath('.//img/@src').extract()
+        shop_list = glist.xpath('./div[@class="p-shop"]/a/@title').extract()
         
         # 当前页面无商品
         if not id_list:
@@ -93,17 +94,15 @@ class IcbcSpider(MySpiderBase):
 #             item['comment'] = commentcount_list[index].encode('utf8').strip()
             item['comment'] = IcbcTools.get_comment(item['idInMarket'])
             item['pics'] = [picurl_list[index].encode('utf8').strip()]
-            item = self.set_common_values(item)
+#             item = self.set_common_values(item)
+            item['updateTime'] = IcbcTools.get_timestamp()
+            item['category'] = category
+            item['shop'] = shop_list[index].encode('utf8').strip()
             yield item
+#             logging.info(item)
             
-#             titleimage_url = picurl_list[index].encode('utf8').strip()
-#             yield scrapy.Request(titleimage_url, callback=self.parse_imageurl, \
-#                                  meta={'item':item})
-#             yield item
 
         # 生成下一页的request
-
-        
         if cur_page < total_page:
             yield scrapy.FormRequest(response.url, callback=self.parse_goods_list_page, \
                                  formdata={'currentPage':str(cur_page + 1)}, \
