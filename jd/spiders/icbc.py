@@ -66,40 +66,32 @@ class IcbcSpider(MySpiderBase):
         category = response.meta['category']
         # 获取当前页面所有商品链接并生成request_list
         glist = response.xpath('//div[@id="search_list"]//div[@class="pro"]')
-        link_list = [self.goods_url_prefix + raw_link for raw_link in glist.xpath('.//div[@class="p-name"]/a/@href').extract()]
-        name_list = glist.xpath('.//div[@class="p-name"]/a/@title').extract()
-        id_list = glist.xpath('./input[@id="prod_id"]/@value').extract()
-        price_list = glist.xpath('./div[@class="p-price"]/text()').extract()
-#         commentcount_list = glist.xpath('./div[@class="extra"]/span[@id="eAmt"]/text()').extract()
-        picurl_list = glist.xpath('.//img/@src').extract()
-        shop_list = glist.xpath('./div[@class="p-shop"]/a/@title').extract()
         
         # 当前页面无商品
-        if not id_list:
+        if not glist:
             logging.info('No more goods for ' + category + ' at page ' + str(cur_page) + ' !')
             return
         
         te = response.xpath('//span[@class="search_page fr"]/text()').extract()[0] 
         total_page = int(re.search(r'/(\d+)', te).group(1))
         logging.info('Now at page %d/%d for %s' % (cur_page, total_page , category))
-        # item_list = []     
-        for index in range(len(name_list)):
+ 
+        for g_sel in glist:
             item = JdItem()
-            item['name'] = name_list[index].encode('utf8').strip()  
+            item['name'] = g_sel.xpath('.//div[@class="p-name"]/a/@title').extract()[0]
             item['market'] = 'ICBC'
-#             item['category'] = category
-            item['idInMarket'] = id_list[index].encode('utf8').strip()
-            item['url'] = link_list[index].encode('utf8').strip()
-            item['price'] = float(re.search(r'[.0-9]+', price_list[index].encode('utf8').strip()).group(0))
-#             item['comment'] = commentcount_list[index].encode('utf8').strip()
+            item['idInMarket'] = g_sel.xpath('./input[@id="prod_id"]/@value').extract()[0]
+            item['url'] = self.goods_url_prefix + g_sel.xpath('.//div[@class="p-name"]/a/@href').extract()[0]
+            price_str = g_sel.xpath('./div[@class="p-price"]/text()').extract()[1]
+            price_str = re.search(r'[,.0-9]+', price_str.encode('utf8').strip()).group(0)
+            price_str.replace(',', '')
+            item['price'] = float(price_str)
             item['comment'] = IcbcTools.get_comment(item['idInMarket'])
-            item['pics'] = [picurl_list[index].encode('utf8').strip()]
-#             item = self.set_common_values(item)
+            item['pics'] = g_sel.xpath('.//img/@src').extract()[0]
             item['updateTime'] = IcbcTools.get_timestamp()
             item['category'] = category
-            item['shop'] = shop_list[index].encode('utf8').strip()
+            item['shop'] = g_sel.xpath('./div[@class="p-shop"]/a/@title').extract()[0]
             yield item
-#             logging.info(item)
             
 
         # 生成下一页的request
