@@ -8,6 +8,7 @@ Created on Dec 23, 2015
 from toolsbase import ToolsBase, RanUAProxy
 import urllib2
 import re
+import logging
 
 class IcbcTools(ToolsBase):
     # id
@@ -31,3 +32,5 @@ class IcbcTools(ToolsBase):
         except Exception:
             return dict()
     
+
+        

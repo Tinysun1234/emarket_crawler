@@ -65,35 +65,38 @@ class IcbcSpider(MySpiderBase):
         cur_page = response.meta['cur_page']
         category = response.meta['category']
         # 获取当前页面所有商品链接并生成request_list
-        glist = response.xpath('//div[@id="search_list"]//div[@class="pro"]')
+        pro_sel_list = response.xpath('//div[@id="search_list"]//div[@class="pro"]')
         
         # 当前页面无商品
-        if not glist:
-            logging.info('No more goods for ' + category + ' at page ' + str(cur_page) + ' !')
+        if not pro_sel_list:
+            logging.info('Complete crawling %s' % category)    
             return
         
-        te = response.xpath('//span[@class="search_page fr"]/text()').extract()[0] 
-        total_page = int(re.search(r'/(\d+)', te).group(1))
-        logging.info('Now at page %d/%d for %s' % (cur_page, total_page , category))
+        try:
+            te = response.xpath('//span[@class="search_page fr"]/text()').extract()[0] 
+            total_page = int(re.search(r'/(\d+)', te).group(1))
+            logging.info('cat:%s now at page:%d/%d' % (category, cur_page, total_page))
+        except Exception:
+            logging.info('Interpret crawling %s' % category)
  
-        for g_sel in glist:
-            item = JdItem()
-            item['name'] = g_sel.xpath('.//div[@class="p-name"]/a/@title').extract()[0]
-            item['market'] = 'ICBC'
-            item['idInMarket'] = g_sel.xpath('./input[@id="prod_id"]/@value').extract()[0]
-            item['url'] = self.goods_url_prefix + g_sel.xpath('.//div[@class="p-name"]/a/@href').extract()[0]
-            price_str = g_sel.xpath('./div[@class="p-price"]/text()').extract()[1]
-            price_str = re.search(r'[,.0-9]+', price_str.encode('utf8').strip()).group(0)
-            price_str.replace(',', '')
-            item['price'] = float(price_str)
-            item['comment'] = IcbcTools.get_comment(item['idInMarket'])
-            item['pics'] = g_sel.xpath('.//img/@src').extract()[0]
-            item['updateTime'] = IcbcTools.get_timestamp()
-            item['category'] = category
-            item['shop'] = g_sel.xpath('./div[@class="p-shop"]/a/@title').extract()[0]
-            yield item
+        for pro_sel in pro_sel_list:
+            try:
+                item = JdItem()
+                item['name'] = pro_sel.xpath('.//div[@class="p-name"]/a/@title').extract()[0]
+                item['market'] = 'ICBC'
+                item['idInMarket'] = pro_sel.xpath('./input[@id="prod_id"]/@value').extract()[0]
+                item['url'] = self.goods_url_prefix + pro_sel.xpath('.//div[@class="p-name"]/a/@href').extract()[0]
+                item['price'] = IcbcTools.str2price(pro_sel.xpath('./div[@class="p-price"]/text()').extract()[1])
+    #             item['comment'] = IcbcTools.get_comment(item['idInMarket'])
+                item['comment'] = int(pro_sel.xpath('.//div[@class="extra"]/span[@id="eAmt"]/text()').extract()[0])
+                item['pics'] = pro_sel.xpath('.//img/@src').extract()[0]
+                item['updateTime'] = IcbcTools.get_timestamp()
+                item['category'] = category
+                item['shop'] = pro_sel.xpath('./div[@class="p-shop"]/a/@title').extract()[0]
+                yield item
+            except Exception as e :
+                logging.warn('Fail get proitem for %s due to %s' % (item['idInMarket'], str(e)))
             
-
         # 生成下一页的request
         if cur_page < total_page:
             yield scrapy.FormRequest(response.url, callback=self.parse_goods_list_page, \

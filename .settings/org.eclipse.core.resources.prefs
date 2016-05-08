@@ -1,0 +1,16 @@
+eclipse.preferences.version=1
+encoding//jd/items.py=utf-8
+encoding//jd/middlewares.py=utf-8
+encoding//jd/pipelines.py=utf-8
+encoding//jd/settings.py=utf-8
+encoding//jd/spiders/amazon.py=utf-8
+encoding//jd/spiders/ccb.py=utf-8
+encoding//jd/spiders/icbc.py=utf-8
+encoding//jd/spiders/jdcrawler.py=utf-8
+encoding//jd/spiders/myspiderbase.py=utf-8
+encoding//jd/spiders/tmall3c.py=utf-8
+encoding//tools/amazontools.py=utf-8
+encoding//tools/ccbtools.py=utf-8
+encoding//tools/icbctools.py=utf-8
+encoding//tools/jdtools.py=utf-8
+encoding//tools/toolsbase.py=utf-8

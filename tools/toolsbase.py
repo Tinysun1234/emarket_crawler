@@ -8,11 +8,11 @@ import random
 import urllib2
 import jd.settings
 import time
+import logging
+import re
 
 def RanUAProxy(func):
     def _RanUAProxy(*args, **kwargs):
-#         proxy = random.choice(jd.settings.PROXIES)
-#         proxy_handler = urllib2.ProxyHandler({'http':"http://%s" % proxy['ip_port']})
         ua = random.choice(jd.settings.USER_AGENTS)
         header_ua = [ ('User-Agent', ua) ]
         opener = urllib2.build_opener()
@@ -36,3 +36,14 @@ class ToolsBase(object):
     @classmethod
     def get_timestamp(cls):
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    
+    @classmethod
+    def str2price(cls, price_str):
+        try:
+            price_str = re.search(r'[,.0-9]+', price_str.encode('utf8').strip()).group(0)
+            price_str = price_str.replace(',', '')
+            return float(price_str)
+        except Exception as e:
+            logging.warn('error get price due to price_str=' + price_str)
+            raise e
+        return 0
